@@ -65,6 +65,8 @@ public class ApiUserController extends ApiBaseController {
 		user.setUserName(phone);
 		user.setPassword(password);
 		if (!StringUtil.equals(password, verifyPassword)) {
+			log.info(password);
+			log.info(verifyPassword);
 			return fail(ApiJsonResult.ERRNO_ILLEALDATA, "注册失败");
 		}
 		try {

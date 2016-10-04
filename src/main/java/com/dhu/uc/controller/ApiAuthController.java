@@ -26,7 +26,7 @@ public class ApiAuthController extends ApiBaseController {
 		try {
 			result.put("data", authService.getAuthTree(userName));
 		} catch (Exception e) {
-			log.debug("查询失败");
+			log.info("查询失败"+e.getMessage());
 			e.printStackTrace();
 			return fail(ApiJsonResult.ERRNO_EXCEPTION);
 		}

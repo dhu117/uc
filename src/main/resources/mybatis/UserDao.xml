@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 务必配置正确namespace 就是所映射的接口类 -->
+<mapper namespace="com.dhu.uc.dao.UserDao">
+ <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+	<!-- 计数评价数目 -->
+	<select id="findUser" resultType="user">
+		select * from t_uc_user user
+		<include refid="listWhere"></include>
+	</select>
+	<!-- 查找评价列表where条件 -->
+	<sql id="listWhere">
+		where 1=1
+		<if test="phone!=null and phone!=''">
+			and
+			user.phone=#{phone}
+		</if>
+		<if test="userName!=null and userName!=''">
+			and
+			user.userName=#{userName}
+		</if>
+	</sql>
+  <!--注册，插入不为空的数据  -->
+  <insert id="insertAndGetId" parameterType="user" useGeneratedKeys="true" keyProperty="ucid">
+    insert into t_uc_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ucid != null">
+        ucid,
+      </if>
+      <if test="userName != null">
+        userName,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="lastLoginIP != null">
+        lastLoginIP,
+      </if>
+      <if test="cityCode != null">
+        cityCode,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="loginFailureCount != null">
+        loginFailureCount,
+      </if>
+      <if test="score != null">
+        score,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="profileImage != null">
+        profileImage,
+      </if>
+      <if test="amount != null">
+        amount,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ucid != null">
+        #{ucid,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginIP != null">
+        #{lastLoginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=TINYINT},
+      </if>
+      <if test="loginFailureCount != null">
+        #{loginFailureCount,jdbcType=INTEGER},
+      </if>
+      <if test="score != null">
+        #{score,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="profileImage != null">
+        #{profileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        #{amount,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+<select id="listUserByParameter" resultType="user">
+select * from t_uc_user user 
+<include refid="searchWhere"></include>
+order by ucid desc limit #{offset},#{pageSize}
+</select>
+<select id="countUserByParameter" resultType="integer">
+select count(user.ucid) from t_uc_user user 
+<include refid="searchWhere"></include>
+</select>
+
+<!-- 查找评价列表where条件 -->
+	<sql id="searchWhere">
+		where 1=1
+		<if test="keyword!=null and keyword!=''">
+			and
+			user.phone like '%#{keyword}%'
+			or user.userName like '%#{keyword}%'
+		</if>
+		<if test="type!=null and type!=''">
+			and
+			user.type=#{type}
+		</if>
+		<if test="gender!=null and gender!=''">
+			and
+			user.gender=#{gender}
+		</if>
+	</sql>
+
+<update id="updateUser">
+  update t_uc_user
+    <set>
+      <if test="userName != null">
+        userName = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=TINYINT},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginIP != null">
+        lastLoginIP = #{lastLoginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="cityCode != null">
+        cityCode = #{cityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=TINYINT},
+      </if>
+      <if test="loginFailureCount != null">
+        loginFailureCount = #{loginFailureCount,jdbcType=INTEGER},
+      </if>
+      <if test="score != null">
+        score = #{score,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="profileImage != null">
+        profileImage = #{profileImage,jdbcType=VARCHAR},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=BIGINT},
+      </if>
+    </set>
+    where ucid=#{ucid}
+    </update>
+    
+    <!-- 删除用户 -->
+	<delete id="deleteUserById">
+		delete from t_uc_user
+		where ucid=#{ucid}
+	</delete>
+</mapper>

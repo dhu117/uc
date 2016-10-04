@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 务必配置正确namespace 就是所映射的接口类 -->
+<mapper namespace="com.dhu.uc.dao.AuthDao">
+<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+<!-- 根据用户名获取权限列表 -->
+	<select id="getAuthTree" resultType="adminAuth">
+	   SELECT distinct auth.* from t_uc_admin admin
+	left join t_uc_admin_role adminRole
+	on admin.userName=adminRole.userName
+	left join t_uc_role_auth roleAuth
+	on adminRole.roleCode=roleAuth.roleCode
+	left join t_uc_admin_auth auth 
+	on roleAuth.authId=auth.id
+	where admin.userName = #{userName,jdbcType=VARCHAR}
+	and auth.id >0
+	 </select>
+  
+  <select id="getAdminAuthById" resultType="adminAuth">
+    select *
+    from t_uc_admin_auth where id=#{id}
+  </select>
+  
+  <insert id="insertSelective" parameterType="adminAuth">
+    insert into t_uc_admin_auth
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="authName != null">
+        authName,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="appCode != null">
+        appCode,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="authName != null">
+        #{authName,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="appCode != null">
+        #{appCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateAdmin">
+  update t_uc_admin_auth
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.authName != null">
+        authName = #{record.authName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.appCode != null">
+        appCode = #{record.appCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null">
+        createTime = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        updateTime = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+  </update>
+  
+  <delete id="deleteById">
+  delete from t_uc_admin_auth
+    where id = #{id}
+  </delete>
+  
+</mapper>

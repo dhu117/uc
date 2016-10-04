@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dhu.uc.dao.RoleDao">
+<cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+
+ <select id="listRoleAuths" resultType="roleAuth">
+     select auth.*,roleAuth.updator,roleAuth.creator
+    from t_uc_admin_auth auth inner join t_uc_role_auth roleAuth
+   on auth.id=roleAuth.authId
+    where roleAuth.roleCode= #{roleCode,jdbcType=VARCHAR}
+  </select>
+   
+ <select id="listUnAuthByRoleCode" resultType="adminAuth">
+     select auth.*
+    from t_uc_admin_auth auth
+    where auth.id not in(
+    select authId from t_uc_role_auth roleAuth where roleAuth.roleCode=#{roleCode,jdbcType=VARCHAR}
+    )
+  </select>
+  
+   <delete id="deleteRoleAuth">
+    delete from t_uc_role_auth
+    where authId = #{authId,jdbcType=BIGINT}
+      and roleCode = #{roleCode,jdbcType=VARCHAR}
+  </delete>
+  
+ <insert id="addRoleAuth">
+    insert into t_uc_role_auth
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="authId != null">
+        authId,
+      </if>
+      <if test="roleCode != null">
+        roleCode,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="updator != null">
+        updator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="authId != null">
+        #{authId,jdbcType=BIGINT},
+      </if>
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updator != null">
+        #{updator,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+
+	
+	<!-- 根据主键删除 -->
+	<delete id="deleteRoleByCode">
+		delete from t_uc_role
+		where roleCode=#{roleCode}
+	</delete>
+	<!--插入所有字段 -->
+	<insert id="insert">
+		insert into t_uc_role (roleCode, type, roleName,
+		createTime, updateTime, status
+		)
+		values (#{roleCode,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER},
+		#{roleName,jdbcType=VARCHAR},
+		now(), now(), #{status,jdbcType=TINYINT}
+		)
+	</insert>
+	<!-- 只插入有数据的字段 -->
+	<insert id="insertRole" parameterType="com.dhu.uc.model.Role">
+		insert into t_uc_role
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="roleCode != null">
+				roleCode,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="roleName != null">
+				roleName,
+			</if>
+			<if test="createTime != null">
+				createTime,
+			</if>
+			<if test="updateTime != null">
+				updateTime,
+			</if>
+			<if test="status != null">
+				status,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="roleCode != null">
+				#{roleCode,jdbcType=VARCHAR},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=INTEGER},
+			</if>
+			<if test="roleName != null">
+				#{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				#{status,jdbcType=TINYINT},
+			</if>
+		</trim>
+	</insert>
+	<!-- 只更新有数据的字段 -->
+	<update id="updateRole">
+		update t_uc_role
+		<set>
+			<if test="type != null">
+				type = #{type,jdbcType=INTEGER},
+			</if>
+			<if test="roleName != null">
+				roleName = #{roleName,jdbcType=VARCHAR},
+			</if>
+			<if test="createTime != null">
+				createTime = #{createTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="updateTime != null">
+				updateTime = #{updateTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="status != null">
+				status = #{status,jdbcType=TINYINT},
+			</if>
+		</set>
+		where roleCode=#{roleCode}
+	</update>
+	
+	<select id="getRoleByRoleCode" resultType="role">
+select * from t_uc_role role where role.roleCode=#{roleCode}
+</select>
+	
+<select id="listRoleByParameter" resultType="role">
+select * from t_uc_role role 
+<include refid="searchWhere"></include>
+order by roleCode desc limit #{offset},#{pageSize}
+</select>
+
+<select id="countRoleByParameter" resultType="integer">
+select count(role.roleCode) from t_uc_role role 
+<include refid="searchWhere"></include>
+</select>
+
+<!-- 查找评价列表where条件 -->
+	<sql id="searchWhere">
+		where 1=1
+		<if test="keyword!=null and keyword!=''">
+			and  role.roleCode like '%#{keyword}%'
+			or role.roleName like '%#{keyword}%'
+		</if>
+		<if test="type!=null and type!=''">
+			and
+			role.type=#{type}
+		</if>
+	</sql>
+	
+	
+	
+</mapper>

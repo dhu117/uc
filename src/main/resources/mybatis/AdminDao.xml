@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- 务必配置正确namespace 就是所映射的接口类 -->
+<mapper namespace="com.dhu.uc.dao.AdminDao">
+ <cache type="org.mybatis.caches.ehcache.LoggingEhcache" />
+ 
+ <select id="listAdminRoles" resultType="adminRole">
+     select role.*,adminRole.updator,adminRole.creator
+    from t_uc_role role inner join t_uc_admin_role adminRole
+   on role.roleCode=adminRole.roleCode
+    where adminRole.userName= #{userName,jdbcType=VARCHAR}
+  </select>
+   
+ <select id="listUnAuthRoles" resultType="adminRole">
+     select  role.*
+    from t_uc_role role
+    where role.roleCode not in(
+    select roleCode from t_uc_admin_role adminRole where adminRole.userName=#{userName,jdbcType=VARCHAR}
+    )
+  </select>
+  
+   <delete id="deleteAdminRole">
+    delete from t_uc_admin_role
+    where userName = #{userName,jdbcType=VARCHAR}
+      and roleCode = #{roleCode,jdbcType=VARCHAR}
+  </delete>
+  
+ <insert id="addAdminRole">
+    insert into t_uc_admin_role
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        userName,
+      </if>
+      <if test="roleCode != null">
+        roleCode,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="updator != null">
+        updator,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null">
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="updator != null">
+        #{updator,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+ 
+<select id="getAdminByUserName" resultType="admin">
+    select  *
+    from t_uc_admin
+    where userName = #{userName,jdbcType=VARCHAR}
+  </select>
+  
+  <select id="findAdmin" resultType="admin">
+    select *
+    from t_uc_admin
+  </select>
+  
+  <insert id="insertSelective" parameterType="admin">
+    insert into t_uc_admin
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        userName,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="createTime != null">
+        createTime,
+      </if>
+      <if test="updateTime != null">
+        updateTime,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="lastLoginIP != null">
+        lastLoginIP,
+      </if>
+      <if test="lastLoginFailureCount != null">
+        lastLoginFailureCount,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="realName != null">
+        realName,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="lastLoginIP != null">
+        #{lastLoginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginFailureCount != null">
+        #{lastLoginFailureCount,jdbcType=INTEGER},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateAdmin">
+   update t_uc_admin
+    <set>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        createTime = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        updateTime = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="lastLoginIP != null">
+        lastLoginIP = #{lastLoginIP,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginFailureCount != null">
+        lastLoginFailureCount = #{lastLoginFailureCount,jdbcType=INTEGER},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="realName != null">
+        realName = #{realName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=TINYINT},
+      </if>
+    </set>
+    where userName=#{userName}
+  </update>
+  
+  <delete id="deleteByUserName">
+	delete from t_uc_admin
+	where userName = #{userName,jdbcType=VARCHAR}
+</delete>
+
+
+	<select id="listAdminByParameter" resultType="admin">
+		select * from t_uc_admin admin
+		<include refid="searchWhere"></include>
+		order by admin.userName limit #{offset},#{pageSize}
+	</select>
+	<select id="countAdminByParameter" resultType="integer">
+		select count(admin.userName) from t_uc_admin admin
+		<include refid="searchWhere"></include>
+	</select>
+
+	<!-- 查找评价列表where条件 -->
+	<sql id="searchWhere">
+		where 1=1
+		<if test="keyword!=null and keyword!=''">
+			and
+			admin.userName like '%#{keyword}%'
+			or admin.realName like
+			'%#{keyword}%'
+		</if>
+	</sql>
+</mapper>

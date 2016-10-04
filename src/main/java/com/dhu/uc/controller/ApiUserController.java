@@ -36,6 +36,7 @@ public class ApiUserController extends ApiBaseController {
 		User user = userService.findUser(null, phone);
 		if (user == null || !StringUtil.equals(DigestUtils.md5Hex(password), user.getPassword())) {
 			result = fail(ApiJsonResult.ERRNO_NOT_FIND, "用户登录失败");
+			return result;
 		}
 		result.put("user", user);
 		return result;
@@ -53,6 +54,31 @@ public class ApiUserController extends ApiBaseController {
 		}
 		return result;
 	}
+	@ResponseBody
+	@RequestMapping(value = "/registerByPhone.json", method = RequestMethod.POST)
+	public ApiJsonResult registerByPhone(HttpServletResponse response,@RequestParam String phone,
+			@RequestParam String password,
+			@RequestParam String verifyPassword) {
+		ApiJsonResult result = ok();
+		User user =new User();
+		user.setPhone(phone);
+		user.setUserName(phone);
+		user.setPassword(password);
+		if (!StringUtil.equals(password, verifyPassword)) {
+			return fail(ApiJsonResult.ERRNO_ILLEALDATA, "注册失败");
+		}
+		try {
+			user.setPassword(DigestUtils.md5Hex(password));
+			userService.insertAndGetId(user);
+		} catch (Exception e) {
+			e.printStackTrace();
+			result = fail(ApiJsonResult.ERRNO_EXCEPTION, "注册失败");
+			return result;
+		}
+		result.put("user", user);
+		return result;
+	}
+	
 	@ResponseBody
 	@RequestMapping(value = "/register.json", method = RequestMethod.POST)
 	public ApiJsonResult register(HttpServletResponse response, @RequestBody User user) {

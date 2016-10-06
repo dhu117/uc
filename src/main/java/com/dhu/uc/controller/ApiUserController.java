@@ -1,5 +1,6 @@
 package com.dhu.uc.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import com.dhu.common.Constants;
 import com.dhu.common.base.ApiBaseController;
 import com.dhu.common.util.StringUtil;
 import com.dhu.portal.model.PageBean;
+import com.dhu.portal.utils.MobileMessageSend;
 import com.dhu.uc.model.User;
 import com.dhu.uc.service.UserService;
 
@@ -77,6 +79,56 @@ public class ApiUserController extends ApiBaseController {
 			result = fail(ApiJsonResult.ERRNO_EXCEPTION, "注册失败");
 			return result;
 		}
+		result.put("user", user);
+		return result;
+	}
+	/**
+	 * 获取登录验证码
+	 * @param response
+	 * @param phone
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/getValidateMsg.json", method = RequestMethod.POST)
+	public ApiJsonResult getValidateMsg(HttpServletResponse response,@RequestParam String phone) {
+		ApiJsonResult result = ok();
+		User user = userService.findUser(null, phone);
+		if(user==null){
+			return fail(ApiJsonResult.ERRNO_NOT_FIND,"您还未注册");
+		}
+		try {
+			MobileMessageSend.sendMsg(phone);
+		} catch (IOException e) {
+			log.info(e.getMessage());
+			e.printStackTrace();
+			return fail(ApiJsonResult.ERRNO_EXCEPTION,"发送验证码失败");
+		}
+		result.put("发送验证码成功！");
+		return result;
+	}
+	
+	/**
+	 * 验证码登录
+	 * @param response
+	 * @param phone
+	 * @param password
+	 * @return
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/loginByCode.json")
+	public ApiJsonResult loginByMsg(HttpServletResponse response, @RequestParam String phone,
+			@RequestParam String msgCode) {
+		ApiJsonResult result = ok();
+		try {
+			if (MobileMessageSend.validateMsg(phone, msgCode)!=0) {
+				result = fail(ApiJsonResult.ERRNO_NOT_FIND, "用户登录失败");
+				return result;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return fail(ApiJsonResult.ERRNO_NOT_FIND, "用户登录失败");
+		}
+		User user = userService.findUser(null, phone);
 		result.put("user", user);
 		return result;
 	}

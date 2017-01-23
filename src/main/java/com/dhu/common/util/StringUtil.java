@@ -10,7 +10,7 @@ import java.util.List;
  * 字符串操作的工具类
  */
 public class StringUtil extends StringUtils {
-
+	public static final String EMPTY="";
     /**
      * 判断字符串是否为空，并且该字符为"null"也为空
      *

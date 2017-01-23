@@ -25,7 +25,21 @@
     <task:scheduler id="scheduler" pool-size="100"/>
     <task:annotation-driven executor="executor" scheduler="scheduler"/>
     
-    
+     <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">  
+        <property name="protocol" value="smtp" />  
+        <property name="host" value="smtp.qq.com" />  
+        <property name="port" value="465" />  
+        <property name="username" value="280146985@qq.com" />  
+        <property name="password" value="lzh523588" />  
+          
+        <property name="javaMailProperties">  
+            <props>  
+                <prop key="mail.smtp.auth">true</prop>  
+                <prop key="mail.smtp.starttls.enable">true</prop>  
+                <prop key="mail.smtp.socketFactory.class">javax.net.ssl.SSLSocketFactory</prop>  
+            </props>  
+        </property>  
+    </bean>  
     <!--RestTemplate-->
     <bean id="api.requestFactory" class="org.springframework.http.client.SimpleClientHttpRequestFactory">
         <property name="readTimeout" value="20000"/>
@@ -87,7 +101,7 @@
     <bean id="pfpSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource_main" />
 		<property name="configLocation" value="classpath:mybatis-config.xml" />
-		<property name="typeAliasesPackage" value="com.dhu.uc.model" />
+		<property name="typeAliasesPackage" value="com.dhu.lottery.model" />
 		<property name="mapperLocations" >
             <list>
                 <value>classpath:mybatis/*.xml</value>
@@ -101,7 +115,7 @@
 
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<property name="sqlSessionFactoryBeanName" value="pfpSqlSessionFactory" />
-		<property name="basePackage" value="com.dhu.uc.dao" />
+		<property name="basePackage" value="com.dhu.lottery.dao" />
 	</bean>
 	
 	<!-- freemarker模板 -->
@@ -131,7 +145,7 @@
 	<bean id="springContextUtil" class="com.dhu.common.util.SpringContextUtil"></bean>
 	
 	<!-- 引入jar包中的配置 -->
-	<import resource="spring-cache.xml"/>
+	<!-- <import resource="spring-cache.xml"/> -->
 	<import resource="spring-ljframework.xml"/>
 	
 </beans>

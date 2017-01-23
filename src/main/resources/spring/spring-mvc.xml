@@ -55,23 +55,5 @@
 	<mvc:resources mapping="/favicon.ico" location="/static/public/images/favicon.ico" order="0" />
 	<mvc:resources mapping="/static/**" location="/static/" />
 	
-	<mvc:interceptors>
-		<!-- 区分城市拦截器 -->
-		<mvc:interceptor>
-			<mvc:mapping path="/**" />
-			<mvc:exclude-mapping path="/static/**"/>
-			<mvc:exclude-mapping path="/**.ico"/>
-			<bean class="com.dhu.common.CityInteceptor" />
-		</mvc:interceptor>
-		<!-- 登录拦截器 -->
-		<mvc:interceptor>
-			<mvc:mapping path="/**" />
-			<mvc:exclude-mapping path="/jingjiren/**"/>
-			<mvc:exclude-mapping path="/api/**"/>
-			<mvc:exclude-mapping path="/static/**"/>
-			<mvc:exclude-mapping path="*.ico"/>
-			<bean class="com.dhu.common.LoginInteceptor" />
-		</mvc:interceptor>
-	</mvc:interceptors>
 	
 </beans>

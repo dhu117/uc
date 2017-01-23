@@ -38,10 +38,6 @@ public abstract class BaseController {
 	protected final static String ERROR_PAGE = "/common/error";
 	protected final static String EMPTY_STR = "";
 	
-    @ModelAttribute("config")
-	protected Map<String, Object> appConfigurerInstance() {
-		return ConfigUtil.getConfigMap();
-	}
     
 
 	// 各种工具方法
